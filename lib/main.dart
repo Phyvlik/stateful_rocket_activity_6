@@ -23,11 +23,40 @@ class CounterWidget extends StatefulWidget {
 }
 
 class _CounterWidgetState extends State<CounterWidget> {
-  // set counter value
   int _counter = 0;
+
+  Color _statusColor() {
+    if (_counter == 0) return Colors.red;
+    if (_counter <= 50) return Colors.orange;
+    return Colors.green;
+  }
+
+  void _ignite() {
+    setState(() {
+      if (_counter < 100) {
+        _counter++;
+      }
+    });
+  }
+
+  void _decrement() {
+    setState(() {
+      if (_counter > 0) {
+        _counter--;
+      }
+    });
+  }
+
+  void _reset() {
+    setState(() {
+      _counter = 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final Color panelColor = _statusColor();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rocket Launch Controller'),
@@ -37,24 +66,61 @@ class _CounterWidgetState extends State<CounterWidget> {
         children: [
           Center(
             child: Container(
-              color: Colors.blue,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+              decoration: BoxDecoration(
+                color: panelColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Text(
-                '$_counter',
-                style: const TextStyle(fontSize: 50.0),
+                _counter == 100 ? "LIFTOFF!" : '$_counter',
+                style: const TextStyle(
+                  fontSize: 50.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-          Slider(
-            min: 0,
-            max: 100,
-            value: _counter.toDouble(),
-            onChanged: (double value) {
-              setState(() {
-                _counter = value.toInt();
-              });
-            },
-            activeColor: Colors.blue,
-            inactiveColor: Colors.red,
+          const SizedBox(height: 18),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Slider(
+              min: 0,
+              max: 100,
+              value: _counter.toDouble(),
+              onChanged: (double value) {
+                setState(() {
+                  _counter = value.toInt();
+                });
+              },
+              activeColor: Colors.blue,
+              inactiveColor: Colors.red,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _ignite,
+                child: const Text('Ignite'),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: _decrement,
+                child: const Text('Decrement'),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: _reset,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Reset'),
+              ),
+            ],
           ),
         ],
       ),
